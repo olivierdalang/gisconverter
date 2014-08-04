@@ -102,7 +102,29 @@ class WKT extends Decoder
     {
         $components = array();
 
-        foreach (preg_split('/\)\s*,\s*\(/', trim($str)) as $compstr) {
+
+        //split $str at outermost bracket pairs
+        
+        $compstrs = array();
+        $parenthesisCounter = 0;
+        $startingPos = 0;
+        for($i=0; $i<strlen($str); $i++){
+            if(substr($str,$i,1)=='('){
+                $parenthesisCounter++;
+                if($parenthesisCounter==1){
+                    $startingPos=$i;
+                }
+            }
+            if(substr($str,$i,1)==')'){
+                $parenthesisCounter--;
+                if($parenthesisCounter==0){
+                    $compstrs[] = substr($str,$startingPos, $i-$startingPos+1);
+                }
+            }
+        }
+
+
+        foreach ($compstrs as $compstr) {
 
             if (strlen($compstr) and $compstr[0] == '(') {
                 $compstr = substr($compstr, 1);
